@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const cors = require('cors');
+const path = require('path');
 
 const users = require('./routes/api/users');
 const messages = require('./routes/api/messages');
@@ -54,10 +55,10 @@ app.use(function(req, res, next) {
 });
 
 // Routes
+app.use('/api/users', users);
+app.use('/api/messages', messages);
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
-app.use('/api/users', users);
-app.use('/api/messages', messages);
