@@ -20,8 +20,8 @@ const server = app.listen(port, () =>
 
 // CORS middleware
 app.use(cors());
-
-const io = require('socket.io').listen(server);
+// TODO: Set up CORS
+const io = require('socket.io').listen(server, { origins: '*:*' });
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
