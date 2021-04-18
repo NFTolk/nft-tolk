@@ -18,10 +18,8 @@ const server = app.listen(port, () =>
   console.log(`Server running on port ${port}`)
 );
 
-// CORS middleware
-app.use(cors());
-// TODO: Set up CORS
-const io = require('socket.io').listen(server, { origins: '*:*' });
+const io = require('socket.io').listen(server);
+io.origins(['http://localhost:3000', 'http://localhost:5000']);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
@@ -33,6 +31,9 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+
+// CORS middleware
+app.use(cors());
 
 // Database configuration
 const db = process.env.MONGO_DB_URI;
