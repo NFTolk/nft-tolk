@@ -22,8 +22,6 @@ const io = require('socket.io').listen(server);
 io.origins([
   'http://localhost:3000',
   'http://localhost:5000',
-  'https://localhost:3000',
-  'https://localhost:5000',
   'https://nft-tolk.herokuapp.com',
 ]);
 
