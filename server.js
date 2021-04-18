@@ -20,6 +20,9 @@ const server = app.listen(port, () =>
 
 const io = require('socket.io').listen(server);
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 // Body Parser middleware to parse request bodies
 app.use(
   bodyParser.urlencoded({
