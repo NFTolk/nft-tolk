@@ -22,6 +22,7 @@ import {
   useSendConversationMessage,
 } from "../Services/chatService";
 import { authenticationService } from "../Services/authenticationService";
+import LoginWithMetaMask from './LoginWithMetaMask'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -140,6 +141,10 @@ const ChatBox = (props) => {
     }
   };
 
+  const onLoggedIn = () => {
+    console.log('logged in...');
+  }
+
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.headerRow}>
@@ -187,9 +192,7 @@ const ChatBox = (props) => {
           <Grid item xs={12} className={classes.inputRow}>
 
             {!currentUserId ? (
-              <div style={{padding: '3em'}}>
-                <Button color="primary" variant="contained" size="large">Join with MetaMask</Button>
-              </div>
+              <LoginWithMetaMask onLoggedIn={onLoggedIn} />
             ) : (
               <ChatInput
                 handleSubmit={handleSubmit}
