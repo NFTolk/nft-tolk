@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route } from 'react-router-dom';
+import { Router, Switch, Route, Redirect } from 'react-router-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
@@ -24,7 +24,7 @@ const theme = createMuiTheme({
             contrastText: '#212121',
         },
         background: {
-            default: '#f0f0f0',
+            default: '#fff',
         },
     },
     typography: {
@@ -38,8 +38,11 @@ function App() {
             <CssBaseline />
             <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
                 <Router history={history}>
-                    <Route path="/" exact component={Home} />
-                    <PrivateRoute path="/chat" component={Chat} />
+                    <Switch>
+                        <Route path="/" component={Chat} exact />
+                        <Route path="/login" component={Home} exact />
+                        <Route render={() => <Redirect to="/" />} />
+                    </Switch>
                 </Router>
             </SnackbarProvider>
         </ThemeProvider>

@@ -48,6 +48,8 @@ const Users = (props) => {
     });
   }, []);
 
+  if (!users.length) return null;
+
   return (
     <List className={classes.list}>
       {users && (

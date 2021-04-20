@@ -12,33 +12,22 @@ const User = require('../../models/User');
 const secretOrKey = process.env.SECRET_OR_KEY;
 
 router.get('/', (req, res) => {
-  try {
-    let jwtUser = jwt.verify(verify(req), secretOrKey);
-    let id = mongoose.Types.ObjectId(jwtUser.id);
-
-    User.aggregate()
-      .match({ _id: { $not: { $eq: id } } })
-      .project({
-        password: 0,
-        __v: 0,
-        date: 0,
-      })
-      .exec((err, users) => {
-        if (err) {
-          console.log(err);
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ message: 'Failure' }));
-          res.sendStatus(500);
-        } else {
-          res.send(users);
-        }
-      });
-  } catch (err) {
-    console.log(err);
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Unauthorized' }));
-    res.sendStatus(401);
-  }
+  User.aggregate()
+    .project({
+      password: 0,
+      __v: 0,
+      date: 0,
+    })
+    .exec((err, users) => {
+      if (err) {
+        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Failure' }));
+        res.sendStatus(500);
+      } else {
+        res.send(users);
+      }
+    });
 });
 
 router.post('/register', (req, res) => {
