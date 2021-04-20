@@ -11,19 +11,6 @@ const GlobalMessage = require('../../models/GlobalMessage');
 const secretOrKey = process.env.SECRET_OR_KEY;
 let jwtUser = null;
 
-// Token verfication middleware
-router.use(function(req, res, next) {
-  try {
-    jwtUser = jwt.verify(verify(req), secretOrKey);
-    next();
-  } catch (err) {
-    console.log(err);
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Unauthorized' }));
-    res.sendStatus(401);
-  }
-});
-
 // Get global messages
 router.get('/global', (req, res) => {
   GlobalMessage.aggregate([
@@ -54,7 +41,18 @@ router.get('/global', (req, res) => {
 });
 
 // Post global message
-router.post('/global', (req, res) => {
+// Token verfication middleware
+router.use(function(req, res, next) {
+  try {
+    jwtUser = jwt.verify(verify(req), secretOrKey);
+    next();
+  } catch (err) {
+    console.log(err);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ message: 'Unauthorized' }));
+    res.sendStatus(401);
+  }
+}).post('/global', (req, res) => {
   let message = new GlobalMessage({
     from: jwtUser.id,
     body: req.body.body,

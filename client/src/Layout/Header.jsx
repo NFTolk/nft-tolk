@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Link from '@material-ui/core/Link';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import Typography from "@material-ui/core/Typography";
 
 import { authenticationService } from '../Services/authenticationService';
 import history from '../Utilities/history';
-import logo from './logo.png';
+import logo from './logo.jpeg';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -28,10 +30,26 @@ const useStyles = makeStyles(theme => ({
             marginLeft: 'auto',
         },
     },
+    toolbar: {
+        height: 100,
+        zIndex: 5,
+        display: 'flex',
+        flexGrow: 1,
+        alignItems: 'center'
+    },
+    logo: {
+        width: '50px',
+        height: '50px',
+        borderRadius: '100%'
+    },
+    appBar: {
+        boxShadow: 'none',
+        borderBottom: '1px solid rgba(0,0,0,.25)'
+    }
 }));
 
 const Header = () => {
-    const [currentUser] = useState(authenticationService.currentUserValue);
+    const [currentUser = {}] = useState(authenticationService.currentUserValue);
     const [anchorEl, setAnchorEl] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -61,10 +79,10 @@ const Header = () => {
 
     return (
         <div className={classes.root}>
-            <AppBar position="static">
-                <Toolbar>
+            <AppBar position="static" color="transparent" className={classes.appBar}>
+                <Toolbar className={classes.toolbar}>
                     <Link href="/" className={classes.title}>
-                        <img src={logo} alt="Logo" />
+                        <img src={logo} alt="Logo" className={classes.logo} />
                     </Link>
                     <Button
                         aria-owns={anchorEl ? 'simple-menu' : undefined}
@@ -73,7 +91,7 @@ const Header = () => {
                         className={classes.userDropdown}
                         color="inherit"
                     >
-                        {currentUser.name}
+                        {currentUser?.name}
                         {arrowIcon()}
                     </Button>
                     <Menu
@@ -94,6 +112,7 @@ const Header = () => {
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>
                 </Toolbar>
+
             </AppBar>
         </div>
     );

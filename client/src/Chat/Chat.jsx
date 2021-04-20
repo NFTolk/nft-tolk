@@ -13,7 +13,7 @@ import Users from './Users';
 
 const useStyles = makeStyles(theme => ({
     paper: {
-        minHeight: 'calc(100vh - 64px)',
+        minHeight: '100vh',
         borderRadius: 0,
     },
     sidebar: {
@@ -44,36 +44,38 @@ const Chat = () => {
 
     return (
         <React.Fragment>
-            <Header />
             <Grid container>
                 <Grid item md={4} className={classes.sidebar}>
-                    <Paper className={classes.paper} square elevation={5}>
-                        <Paper square>
-                            <Tabs
-                                onChange={handleChange}
-                                variant="fullWidth"
-                                value={tab}
-                                indicatorColor="primary"
-                                textColor="primary"
-                            >
-                                <Tab label="Chats" />
-                                <Tab label="Users" />
-                            </Tabs>
-                        </Paper>
+                    <Paper className={classes.paper}>
+
+                        <Header />
+                        <Tabs
+                            onChange={handleChange}
+                            variant="fullWidth"
+                            value={tab}
+                            indicatorColor="primary"
+                            textColor="primary"
+                        >
+                            <Tab label="Users" />
+                            <Tab label="Chats" />
+                        </Tabs>
+
                         {tab === 0 && (
+                            <Users setUser={setUser} setScope={setScope} />
+                        )}
+                        {tab === 1 && (
                             <Conversations
                                 setUser={setUser}
                                 setScope={setScope}
                             />
                         )}
-                        {tab === 1 && (
-                            <Users setUser={setUser} setScope={setScope} />
-                        )}
                     </Paper>
                 </Grid>
+
                 <Grid item md={8}>
                     <ChatBox scope={scope} user={user} />
                 </Grid>
+
             </Grid>
         </React.Fragment>
     );

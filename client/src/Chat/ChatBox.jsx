@@ -4,6 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
+import Button from "@material-ui/core/Button";
 import SendIcon from "@material-ui/icons/Send";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -34,8 +35,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    height: "100%",
+    height: "100px",
     color: theme.palette.primary.dark,
+    boxShadow: 'none',
+    borderBottom: '1px solid rgba(0,0,0, .25)'
   },
   messageContainer: {
     height: "100%",
@@ -52,10 +55,9 @@ const useStyles = makeStyles((theme) => ({
   },
   messageBubble: {
     padding: 10,
-    border: "1px solid white",
+    border: "1px solid rgba(0,0,0, .1)",
     backgroundColor: "white",
     borderRadius: "0 10px 10px 10px",
-    boxShadow: "-3px 4px 4px 0px rgba(0,0,0,0.08)",
     marginTop: 8,
     maxWidth: "40em",
   },
@@ -83,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatBox = (props) => {
   const [currentUserId] = useState(
-    authenticationService.currentUserValue.userId
+    authenticationService.currentUserValue?.userId
   );
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -150,7 +152,7 @@ const ChatBox = (props) => {
       <Grid item xs={12}>
         <Grid container className={classes.messageContainer}>
           <Grid item xs={12} className={classes.messagesRow}>
-            {messages && (
+            {messages.length ? (
               <List>
                 {messages.map((m) => (
                   <ListItem
@@ -179,39 +181,63 @@ const ChatBox = (props) => {
                   </ListItem>
                 ))}
               </List>
-            )}
+            ) : null}
             <div ref={chatBottom} />
           </Grid>
           <Grid item xs={12} className={classes.inputRow}>
-            <form onSubmit={handleSubmit} className={classes.form}>
-              <Grid
-                container
-                className={classes.newMessageRow}
-                alignItems="flex-end"
-              >
-                <Grid item xs={11}>
-                  <TextField
-                    id="message"
-                    label="Message"
-                    variant="outlined"
-                    margin="dense"
-                    fullWidth
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                  />
-                </Grid>
-                <Grid item xs={1}>
-                  <IconButton type="submit">
-                    <SendIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-            </form>
+
+            {!currentUserId ? (
+              <div style={{padding: '3em'}}>
+                <Button color="primary" variant="contained" size="large">Join with MetaMask</Button>
+              </div>
+            ) : (
+              <ChatInput
+                handleSubmit={handleSubmit}
+                classes={classes}
+                newMessage={newMessage}
+                setNewMessage={setNewMessage}
+              />
+            )}
+
           </Grid>
         </Grid>
       </Grid>
     </Grid>
   );
 };
+
+const ChatInput = ({
+  handleSubmit,
+  classes,
+  newMessage,
+  setNewMessage,
+}) => {
+  return (
+    <form onSubmit={handleSubmit} className={classes.form}>
+      <Grid
+        container
+        className={classes.newMessageRow}
+        alignItems="flex-end"
+      >
+        <Grid item xs={11}>
+          <TextField
+            id="message"
+            label="Message"
+            variant="outlined"
+            margin="dense"
+            fullWidth
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={1}>
+          <IconButton type="submit">
+            <SendIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
 
 export default ChatBox;
