@@ -19,6 +19,11 @@ const UserSchema = new Schema({
         type: String,
         default: Date.now,
     },
+    publicAddress: {
+        type: String,
+        required: true,
+    },
 });
 
-module.exports = User = mongoose.model('users', UserSchema);
+const User = mongoose.model('users', UserSchema);
+module.exports = User;

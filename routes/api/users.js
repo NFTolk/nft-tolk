@@ -30,6 +30,40 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/find', (req, res) => {
+  // If a query string ?publicAddress=... is given, then filter results
+	// const whereClause =
+  // req.query && req.query.publicAddress
+  //   ? {
+  //       publicAddress: req.query.publicAddress
+  //     }
+  //   : undefined;
+  res.send([]);
+
+  User.aggregate()
+    // .match(whereClause)
+    .project({
+      password: 0,
+      __v: 0,
+      date: 0,
+    })
+    .exec((err, users) => {
+      if (err) {
+        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Failure' }));
+        res.sendStatus(500);
+      } else {
+        res.send(users);
+      }
+    });
+});
+
+router.post('/', (req, res) => {
+  const user = new User(req.body);
+  res.json(user);
+});
+
 router.post('/register', (req, res) => {
   // Form validation
   const { errors, isValid } = validateRegisterInput(req.body);
