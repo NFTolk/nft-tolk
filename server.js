@@ -8,6 +8,7 @@ const path = require('path');
 
 const users = require('./routes/api/users');
 const messages = require('./routes/api/messages');
+const auth = require('./routes/api/auth');
 
 const app = express();
 
@@ -65,9 +66,10 @@ app.use(function(req, res, next) {
 // Routes
 app.use('/api/users', users);
 app.use('/api/messages', messages);
+app.use('/api/auth', auth);
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  // res.sendFile(path.join(__dirname + '/client/build/index.html'));
-  res.send({error: 'not found'}, 404);
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
+  // res.send({error: 'not found'}, 404);
 });

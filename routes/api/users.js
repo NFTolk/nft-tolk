@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
-
-const verify = require('../../utilities/verify-token');
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
 const User = require('../../models/User');
@@ -31,37 +28,30 @@ router.get('/', (req, res) => {
 });
 
 router.get('/find', (req, res) => {
-  // If a query string ?publicAddress=... is given, then filter results
-	// const whereClause =
-  // req.query && req.query.publicAddress
-  //   ? {
-  //       publicAddress: req.query.publicAddress
-  //     }
-  //   : undefined;
-  res.send([]);
-
-  User.aggregate()
-    // .match(whereClause)
-    .project({
-      password: 0,
-      __v: 0,
-      date: 0,
-    })
-    .exec((err, users) => {
-      if (err) {
-        console.log(err);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ message: 'Failure' }));
-        res.sendStatus(500);
-      } else {
-        res.send(users);
-      }
-    });
+  if (!req.query && !req.query.publicAddress) {
+    return res.status(400).json('publicAddress query is required');
+  } else {
+    User.aggregate()
+      .match({ publicAddress: req.query.publicAddress })
+      .exec((err, user) => {
+        if (err) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ message: 'Failure' }));
+          res.sendStatus(500);
+        } else {
+          res.send(user);
+        }
+      });
+  }
 });
 
 router.post('/', (req, res) => {
-  const user = new User(req.body);
-  res.json(user);
+  if (!req.body) {
+    return res.status(400).json('publicAddress query is required');
+  } else {
+    const newUser = new User({ ...req.body, name: req.body.publicAddress });
+    newUser.save().then(user => res.json(user));
+  }
 });
 
 router.post('/register', (req, res) => {
