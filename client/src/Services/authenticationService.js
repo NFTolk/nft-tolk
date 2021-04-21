@@ -3,7 +3,7 @@ import { useSnackbar } from 'notistack';
 
 import useHandleResponse from '../Utilities/handle-response';
 
-const currentUserSubject = new BehaviorSubject(
+export const currentUserSubject = new BehaviorSubject(
     JSON.parse(localStorage.getItem('currentUser'))
 );
 

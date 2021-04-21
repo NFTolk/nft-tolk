@@ -64,6 +64,8 @@ const useStyles = makeStyles((theme) => ({
   },
   messageBubbleRight: {
     borderRadius: "10px 0 10px 10px",
+    backgroundColor: '#edf6fd',
+    borderColor: '#edf6fd',
   },
   inputRow: {
     display: "flex",
@@ -86,8 +88,9 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatBox = (props) => {
   const [currentUserId] = useState(
-    authenticationService.currentUserValue?.userId
+    authenticationService.currentUserValue?.id
   );
+  const [currentUser = {}] = useState(authenticationService.currentUserValue);
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);

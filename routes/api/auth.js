@@ -54,6 +54,8 @@ router.post('/', (req, res) => {
                     success: true,
                     token: 'Bearer ' + token,
                     name: user.name,
+                    publicAddress,
+                    id: user.id,
                   });
                 }
               }
