@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack';
 
 import useHandleResponse from '../Utilities/handle-response';
 import getWeb3 from "../Utilities/getWeb3";
+import { currentUserSubject } from '../Services/authenticationService';
 
 export default function LoginWithMetaMask({ onLoggedIn }) {
     const [loading, setLoading] = React.useState(false)
@@ -11,7 +12,6 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
     const handleResponse = useHandleResponse();
 
     const login = async () => {
-
         try {
             // Get network provider and web3 instance.
             const web3 = await getWeb3();
@@ -41,6 +41,11 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
                 .then(handleSignMessage)
                 // Send signature to backend on the /auth route
                 .then(handleAuthenticate)
+                .then(user => {
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    currentUserSubject.next(user);
+                    return user;
+                })
                 // Pass accessToken back to parent component (to save it in localStorage)
                 .then(onLoggedIn)
                 .catch((err) => {

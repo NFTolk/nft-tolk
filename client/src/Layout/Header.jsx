@@ -13,7 +13,7 @@ import Typography from "@material-ui/core/Typography";
 
 import { authenticationService } from '../Services/authenticationService';
 import history from '../Utilities/history';
-import logo from './logo.jpeg';
+import logo from './logo.gif';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -38,13 +38,21 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center'
     },
     logo: {
-        width: '50px',
-        height: '50px',
-        borderRadius: '100%'
+        width: '130px',
+        height: '130px',
+        borderRadius: '100%',
+        display: 'flex',
+        marginBottom: '-20px',
+        marginLeft: '-20px',
     },
     appBar: {
         boxShadow: 'none',
         borderBottom: '1px solid rgba(0,0,0,.25)'
+    },
+    username: {
+        overflow: 'hidden',
+        width: '130px',
+        textOverflow: 'ellipsis'
     }
 }));
 
@@ -91,7 +99,9 @@ const Header = () => {
                         className={classes.userDropdown}
                         color="inherit"
                     >
-                        {currentUser?.name}
+                        <span className={classes.username}>
+                            {currentUser?.name}
+                        </span>
                         {arrowIcon()}
                     </Button>
                     <Menu
