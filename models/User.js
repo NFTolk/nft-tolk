@@ -3,26 +3,25 @@ const Schema = mongoose.Schema;
 
 // Create Schema for Users
 const UserSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    username: {
-        type: String,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    date: {
-        type: String,
-        default: Date.now,
-    },
-    publicAddress: {
-        type: String,
-        required: true,
-    },
+  name: {
+    type: String,
+    required: true,
+  },
+  nonce: {
+    type: String,
+    allowNull: false,
+    default: () => Math.floor(Math.random() * 1000000),
+  },
+  publicAddress: {
+    type: String,
+    required: true,
+    unique: true,
+    allowNull: false,
+  },
+  date: {
+    type: String,
+    default: Date.now,
+  },
 });
 
 const User = mongoose.model('users', UserSchema);
