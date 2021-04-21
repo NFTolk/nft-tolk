@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
                 if (err) {
                   console.log(err);
                 } else {
-                  req.io.sockets.emit('users', user.username);
+                  req.io.sockets.emit('users', user.name);
                   res.json({
                     success: true,
                     token: 'Bearer ' + token,
