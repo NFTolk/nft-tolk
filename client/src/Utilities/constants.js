@@ -1,1 +1,1 @@
-export const globalChatTitle = '🌍 Global Chat';
+export const globalChatTitle = '🌍 Global Chat (BSC Mainnet)';

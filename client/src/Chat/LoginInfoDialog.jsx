@@ -9,6 +9,8 @@ import IconButton from "@material-ui/core/IconButton";
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import Slide from '@material-ui/core/Slide';
 
+import DialogBSCText from './DialogBSCText';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -44,13 +46,9 @@ export const LoginInfoDialog = () => {
             Metamask is used here to create and access account in secure way. <br />
             You can <a href="https://metamask.io/" target="_blank">install it here</a>.
           </DialogContentText>
-          <DialogContentText id="alert-dialog-description">
-            At this phase the app is limited to <a href="https://www.binance.org/en/smartChain" target="_blank">Binance Smart Chain (BSC)</a> blockchain, so we don't meshup accounts from diferent networks. It could be expanded to use more blockchains later though.
-          </DialogContentText>
-          <DialogContentText id="alert-dialog-description">
-            BSC isn't available in Metamask be default, so you need to add it manually.
-            It is pretty easy and quick config. You can find step-by-step instructions <a href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain" target="_blank">here</a>.
-          </DialogContentText>
+
+          <DialogBSCText />
+
           <DialogContentText id="alert-dialog-description">
             <br />
             <hr />

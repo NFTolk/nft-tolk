@@ -7,6 +7,7 @@ import useHandleResponse from "../Utilities/handle-response";
 import getWeb3 from "../Utilities/getWeb3";
 import { currentUserSubject } from "../Services/authenticationService";
 import metamaskLogo from './metamask-logo.webp';
+import WrongNetworkDialog from './WrongNetworkDialog'
 
 const useStyles = makeStyles(theme => ({
     metamaskLogo: {
@@ -24,10 +25,17 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
+const networkIdBSC = 56;
+
 export default function LoginWithMetaMask({ onLoggedIn }) {
     const [loading, setLoading] = React.useState(false);
+    const [wrongNetworkError, setWrongNetworkError] = React.useState(false);
     const { enqueueSnackbar } = useSnackbar();
     const handleResponse = useHandleResponse();
+
+    const handleClose = () => {
+        setWrongNetworkError(false);
+    }
 
     const login = async () => {
         try {
@@ -39,6 +47,13 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
                 enqueueSnackbar("Please activate MetaMask first.", {
                     variant: "info",
                 });
+                return;
+            }
+
+            const networkId = await web3.eth.net.getId();
+            // ATM we support only BSC network
+            if (networkId !== networkIdBSC) {
+                setWrongNetworkError(true);
                 return;
             }
 
@@ -132,7 +147,9 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
                 }
             >
                 Join with MetaMask
-      </Button>
+            </Button>
+
+            <WrongNetworkDialog isOpen={wrongNetworkError} handleClose={handleClose} />
         </div>
     );
 }

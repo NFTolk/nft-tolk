@@ -120,7 +120,7 @@ const ChatBox = ({ scope, user, currentUser, currentUserId, onLoggedIn, conversa
         setMessages(res);
       });
     } else if (scope !== null && conversationId !== null) {
-      getConversationMessages(user._id).then((res) => setMessages(res));
+      getConversationMessages(user?._id).then((res) => setMessages(res));
     } else {
       setMessages([]);
     }
