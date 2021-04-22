@@ -11,6 +11,8 @@ Hackathon details: https://hackerlink.io/en/Grant/RCIS/Round/1/detail
 
 ## Technical Details
 
+High-level app architecture looks like this:
+
 ![NFTolk Acrhitecture](https://raw.githubusercontent.com/NFTolk/nft-tolk/master/assets/nft-infra.svg)
 
 This is a full-stack chat application that can be up and running with just a few steps.
