@@ -12,6 +12,7 @@ import socketIOClient from "socket.io-client";
 import { useGetConversations } from "../Services/chatService";
 import { authenticationService } from "../Services/authenticationService";
 import commonUtilites from "../Utilities/common";
+import { globalChatTitle } from '../Utilities/constants';
 
 const useStyles = makeStyles((theme) => ({
   subheader: {
@@ -20,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
   },
   globe: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: 'transparent',
+    fontSize: '2em'
   },
   subheaderText: {
     color: theme.palette.primary.dark,
@@ -69,12 +71,13 @@ const Conversations = (props) => {
       <ListItem
         classes={{ root: classes.subheader }}
         onClick={() => {
-          props.setScope("Global Chat");
+          props.setScope(globalChatTitle);
         }}
       >
         <ListItemAvatar>
           <Avatar className={classes.globe}>
-            <LanguageIcon />
+            {/* <LanguageIcon /> */}
+            🌍
           </Avatar>
         </ListItemAvatar>
         <ListItemText className={classes.subheaderText} primary="Global Chat" />
@@ -90,18 +93,18 @@ const Conversations = (props) => {
               button
               onClick={() => {
                 props.setUser(handleRecipient(c.recipientObj));
-                props.setScope(handleRecipient(c.recipientObj).name);
+                props.setScope(handleRecipient(c.recipientObj)?.name);
               }}
             >
               <ListItemAvatar>
                 <Avatar>
                   {commonUtilites.getInitialsFromName(
-                    handleRecipient(c.recipientObj).name
+                    handleRecipient(c.recipientObj)?.name
                   )}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
-                primary={handleRecipient(c.recipientObj).name}
+                primary={handleRecipient(c.recipientObj)?.name}
                 secondary={<React.Fragment>{c.lastMessage}</React.Fragment>}
               />
             </ListItem>

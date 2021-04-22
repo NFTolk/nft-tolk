@@ -3,9 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
-import SendIcon from "@material-ui/icons/Send";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -21,8 +19,9 @@ import {
   useGetConversationMessages,
   useSendConversationMessage,
 } from "../Services/chatService";
-import { authenticationService } from "../Services/authenticationService";
-import LoginWithMetaMask from './LoginWithMetaMask'
+import LoginWithMetaMask from './LoginWithMetaMask';
+import { globalChatTitle } from '../Utilities/constants';
+import LoginInfoDialog from './LoginInfoDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,27 +54,29 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 2, 1),
   },
   messageBubble: {
-    padding: 10,
-    border: "1px solid rgba(0,0,0, .1)",
     backgroundColor: "white",
     borderRadius: "0 10px 10px 10px",
-    marginTop: 8,
     maxWidth: "40em",
   },
   messageBubbleRight: {
     borderRadius: "10px 0 10px 10px",
     backgroundColor: '#edf6fd',
     borderColor: '#edf6fd',
+    padding: '10px',
+    marginRight: '10px'
   },
   inputRow: {
     display: "flex",
     alignItems: "flex-end",
   },
+  input: {
+    padding: '10px',
+  },
   form: {
     width: "100%",
   },
   avatar: {
-    margin: theme.spacing(1, 1.5),
+    margin: theme.spacing(1, 0),
   },
   listItem: {
     display: "flex",
@@ -84,13 +85,13 @@ const useStyles = makeStyles((theme) => ({
   listItemRight: {
     flexDirection: "row-reverse",
   },
+  username: {
+    fontWeight: 500,
+    opacity: 0.3,
+  }
 }));
 
-const ChatBox = (props) => {
-  const [currentUserId] = useState(
-    authenticationService.currentUserValue?.id
-  );
-  const [currentUser = {}] = useState(authenticationService.currentUserValue);
+const ChatBox = ({ scope, user, currentUser, currentUserId, onLoggedIn, conversationId }) => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);
@@ -106,7 +107,7 @@ const ChatBox = (props) => {
   useEffect(() => {
     reloadMessages();
     scrollToBottom();
-  }, [lastMessage, props.scope, props.conversationId]);
+  }, [lastMessage, scope, conversationId]);
 
   useEffect(() => {
     const socket = socketIOClient(process.env.REACT_APP_API_URL);
@@ -114,12 +115,12 @@ const ChatBox = (props) => {
   }, []);
 
   const reloadMessages = () => {
-    if (props.scope === "Global Chat") {
+    if (scope === globalChatTitle) {
       getGlobalMessages().then((res) => {
         setMessages(res);
       });
-    } else if (props.scope !== null && props.conversationId !== null) {
-      getConversationMessages(props.user._id).then((res) => setMessages(res));
+    } else if (scope !== null && conversationId !== null) {
+      getConversationMessages(user?._id).then((res) => setMessages(res));
     } else {
       setMessages([]);
     }
@@ -133,27 +134,23 @@ const ChatBox = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (props.scope === "Global Chat") {
+    if (scope === globalChatTitle) {
       sendGlobalMessage(newMessage).then(() => {
         setNewMessage("");
       });
     } else {
-      sendConversationMessage(props.user._id, newMessage).then((res) => {
+      sendConversationMessage(user._id, newMessage).then((res) => {
         setNewMessage("");
       });
     }
   };
-
-  const onLoggedIn = () => {
-    console.log('logged in...');
-  }
 
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.headerRow}>
         <Paper className={classes.paper} square elevation={2}>
           <Typography color="inherit" variant="h6">
-            {props.scope}
+            {scope}
           </Typography>
         </Paper>
       </Grid>
@@ -183,8 +180,12 @@ const ChatBox = (props) => {
                             m.fromObj[0]._id === currentUserId,
                         }),
                       }}
-                      primary={m.fromObj[0] && m.fromObj[0].name}
-                      secondary={<React.Fragment>{m.body}</React.Fragment>}
+                      primary={
+                        <>
+                          <div className={classes.username}>{m.fromObj[0] && m.fromObj[0].name}</div>
+                          <div>{m.body}</div>
+                        </>
+                      }
                     />
                   </ListItem>
                 ))}
@@ -195,7 +196,17 @@ const ChatBox = (props) => {
           <Grid item xs={12} className={classes.inputRow}>
 
             {!currentUserId ? (
-              <LoginWithMetaMask onLoggedIn={onLoggedIn} />
+              <Grid
+                container
+                alignItems="center"
+              >
+                <Grid item xs={11}>
+                  <LoginWithMetaMask onLoggedIn={onLoggedIn} />
+                </Grid>
+                <Grid item xs={1}>
+                  <LoginInfoDialog />
+                </Grid>
+              </Grid>
             ) : (
               <ChatInput
                 handleSubmit={handleSubmit}
@@ -204,7 +215,6 @@ const ChatBox = (props) => {
                 setNewMessage={setNewMessage}
               />
             )}
-
           </Grid>
         </Grid>
       </Grid>
@@ -225,21 +235,16 @@ const ChatInput = ({
         className={classes.newMessageRow}
         alignItems="flex-end"
       >
-        <Grid item xs={11}>
+        <Grid item xs={12}>
           <TextField
             id="message"
-            label="Message"
-            variant="outlined"
+            className={classes.input}
+            placeholder="Say something..."
             margin="dense"
             fullWidth
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
-        </Grid>
-        <Grid item xs={1}>
-          <IconButton type="submit">
-            <SendIcon />
-          </IconButton>
         </Grid>
       </Grid>
     </form>
