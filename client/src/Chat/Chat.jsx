@@ -10,6 +10,7 @@ import Header from '../Layout/Header';
 import ChatBox from './ChatBox';
 import Conversations from './Conversations';
 import Users from './Users';
+import { globalChatTitle } from '../Utilities/constants';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Chat = () => {
-    const [scope, setScope] = useState('Global Chat');
+    const [scope, setScope] = useState(globalChatTitle);
     const [tab, setTab] = useState(0);
     const [user, setUser] = useState(null);
     const classes = useStyles();

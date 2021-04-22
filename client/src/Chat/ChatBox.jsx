@@ -22,7 +22,8 @@ import {
   useSendConversationMessage,
 } from "../Services/chatService";
 import { authenticationService } from "../Services/authenticationService";
-import LoginWithMetaMask from './LoginWithMetaMask'
+import LoginWithMetaMask from './LoginWithMetaMask';
+import { globalChatTitle } from '../Utilities/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,27 +56,29 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 2, 1),
   },
   messageBubble: {
-    padding: 10,
-    border: "1px solid rgba(0,0,0, .1)",
     backgroundColor: "white",
     borderRadius: "0 10px 10px 10px",
-    marginTop: 8,
     maxWidth: "40em",
   },
   messageBubbleRight: {
     borderRadius: "10px 0 10px 10px",
     backgroundColor: '#edf6fd',
     borderColor: '#edf6fd',
+    padding: '10px',
+    marginRight: '10px'
   },
   inputRow: {
     display: "flex",
     alignItems: "flex-end",
   },
+  input: {
+    padding: '10px',
+  },
   form: {
     width: "100%",
   },
   avatar: {
-    margin: theme.spacing(1, 1.5),
+    margin: theme.spacing(1, 0),
   },
   listItem: {
     display: "flex",
@@ -84,6 +87,10 @@ const useStyles = makeStyles((theme) => ({
   listItemRight: {
     flexDirection: "row-reverse",
   },
+  username: {
+    fontWeight: 500,
+    opacity: 0.3,
+  }
 }));
 
 const ChatBox = (props) => {
@@ -114,7 +121,7 @@ const ChatBox = (props) => {
   }, []);
 
   const reloadMessages = () => {
-    if (props.scope === "Global Chat") {
+    if (props.scope === globalChatTitle) {
       getGlobalMessages().then((res) => {
         setMessages(res);
       });
@@ -133,7 +140,7 @@ const ChatBox = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (props.scope === "Global Chat") {
+    if (props.scope === globalChatTitle) {
       sendGlobalMessage(newMessage).then(() => {
         setNewMessage("");
       });
@@ -183,8 +190,12 @@ const ChatBox = (props) => {
                             m.fromObj[0]._id === currentUserId,
                         }),
                       }}
-                      primary={m.fromObj[0] && m.fromObj[0].name}
-                      secondary={<React.Fragment>{m.body}</React.Fragment>}
+                      primary={
+                        <>
+                          <div className={classes.username}>{m.fromObj[0] && m.fromObj[0].name}</div>
+                          <div>{m.body}</div>
+                        </>
+                      }
                     />
                   </ListItem>
                 ))}
@@ -225,22 +236,23 @@ const ChatInput = ({
         className={classes.newMessageRow}
         alignItems="flex-end"
       >
-        <Grid item xs={11}>
+        <Grid item xs={12}>
           <TextField
             id="message"
-            label="Message"
-            variant="outlined"
+            className={classes.input}
+            placeholder="Say something..."
+            // variant="outlined"
             margin="dense"
             fullWidth
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
           />
         </Grid>
-        <Grid item xs={1}>
+        {/* <Grid item xs={1}>
           <IconButton type="submit">
             <SendIcon />
           </IconButton>
-        </Grid>
+        </Grid> */}
       </Grid>
     </form>
   )
