@@ -23,7 +23,7 @@ This is a full-stack chat application that can be up and running with just a few
 Its frontend is built with React.
 The backend is built with Express.js and Node.js.
 Real-time message broadcasting is developed using [Socket.IO](https://socket.io/).
-Metamask is used to provide user unique ID and to sign access key with crypto [Related Article](https://www.toptal.com/ethereum/one-click-login-flows-a-metamask-tutorial)
+Metamask is used to provide user unique ID and to sign access key with crypto (More details about auth process can be find in this [Article](https://www.toptal.com/ethereum/one-click-login-flows-a-metamask-tutorial))
 
 
 ### How to run dev server
