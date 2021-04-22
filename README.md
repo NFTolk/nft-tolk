@@ -5,9 +5,13 @@ This is prototype app for NFT chat app. We use it as working directory for BSC N
 Project details: https://hackerlink.io/en/Buidl/331
 Hackathon details: https://hackerlink.io/en/Grant/RCIS/Round/1/detail
 
-## Vision
+## 💡 Vision
 
-🗯 NFTolk is simple way to communicate with NFT holders, create chat rooms for NFT fans, public & private rooms and more.
+NFTolk is simple way to communicate with NFT holders, create chat rooms for NFT fans, public & private rooms and more.
+
+## 🚀 Demo
+
+https://github.com/NFTolk/nft-tolk/deployments
 
 ## Technical Details
 
