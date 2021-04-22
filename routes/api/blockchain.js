@@ -13,7 +13,7 @@ router.get('/nft', (req, res) => {
       .then(({ data }) => {
         // return list of nfts
         if (data.message === 'OK') {
-          res.send([]);
+          res.send(data.result);
         } else {
           res.send([]);
         }

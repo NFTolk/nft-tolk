@@ -24,7 +24,7 @@ router.get('/global', (req, res) => {
     },
   ])
     .project({
-      'fromObj.password': 0,
+      'fromObj.publicAddress': 0,
       'fromObj.__v': 0,
       'fromObj.date': 0,
     })
@@ -42,36 +42,38 @@ router.get('/global', (req, res) => {
 
 // Post global message
 // Token verfication middleware
-router.use(function(req, res, next) {
-  try {
-    jwtUser = jwt.verify(verify(req), secretOrKey);
-    next();
-  } catch (err) {
-    console.log(err);
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Unauthorized' }));
-    res.sendStatus(401);
-  }
-}).post('/global', (req, res) => {
-  let message = new GlobalMessage({
-    from: jwtUser.id,
-    body: req.body.body,
-  });
-
-  req.io.sockets.emit('messages', req.body.body);
-
-  message.save(err => {
-    if (err) {
+router
+  .use(function(req, res, next) {
+    try {
+      jwtUser = jwt.verify(verify(req), secretOrKey);
+      next();
+    } catch (err) {
       console.log(err);
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ message: 'Failure' }));
-      res.sendStatus(500);
-    } else {
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ message: 'Success' }));
+      res.end(JSON.stringify({ message: 'Unauthorized' }));
+      res.sendStatus(401);
     }
+  })
+  .post('/global', (req, res) => {
+    let message = new GlobalMessage({
+      from: jwtUser.id,
+      body: req.body.body,
+    });
+
+    req.io.sockets.emit('messages', req.body.body);
+
+    message.save(err => {
+      if (err) {
+        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Failure' }));
+        res.sendStatus(500);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Success' }));
+      }
+    });
   });
-});
 
 // Get conversations list
 router.get('/conversations', (req, res) => {
@@ -88,7 +90,7 @@ router.get('/conversations', (req, res) => {
   ])
     .match({ recipients: { $all: [{ $elemMatch: { $eq: from } }] } })
     .project({
-      'recipientObj.password': 0,
+      'recipientObj.publicAddress': 0,
       'recipientObj.__v': 0,
       'recipientObj.date': 0,
     })
@@ -134,10 +136,10 @@ router.get('/conversations/query', (req, res) => {
       ],
     })
     .project({
-      'toObj.password': 0,
+      'toObj.publicAddress': 0,
       'toObj.__v': 0,
       'toObj.date': 0,
-      'fromObj.password': 0,
+      'fromObj.publicAddress': 0,
       'fromObj.__v': 0,
       'fromObj.date': 0,
     })
