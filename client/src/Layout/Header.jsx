@@ -2,17 +2,13 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Link from '@material-ui/core/Link';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import Typography from "@material-ui/core/Typography";
-import Tooltip from '@material-ui/core/Tooltip';
 
-import history from '../Utilities/history';
 import logo from './logo.gif';
 
 const useStyles = makeStyles(theme => ({

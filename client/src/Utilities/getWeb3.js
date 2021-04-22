@@ -1,6 +1,7 @@
 import Web3 from "web3";
 
-const getWeb3WhenWindowLoaded = () =>
+// Not used ATM. maybe rmeove it..
+export const getWeb3WhenWindowLoaded = () =>
   new Promise((resolve, reject) => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener("load", async () => {
