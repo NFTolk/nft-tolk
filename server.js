@@ -24,7 +24,7 @@ const io = require('socket.io').listen(server);
 io.origins([
   'http://localhost:3000',
   'http://localhost:5000',
-  'https://nft-tolk.herokuapp.com',
+  'https://nfttolk.herokuapp.com',
 ]);
 
 // Serve static files from the React app
