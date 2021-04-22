@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import List from '@material-ui/core/List';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import List from "@material-ui/core/List";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 
-import Header from '../Layout/Header';
-import ChatBox from './ChatBox';
-import Conversations from './Conversations';
-import Users from './Users';
-import { globalChatTitle } from '../Utilities/constants';
+import Header from "../Layout/Header";
+import ChatBox from "./ChatBox";
+import Conversations from "./Conversations";
+import Users from "./Users";
+import { globalChatTitle } from "../Utilities/constants";
+import { authenticationService } from "../Services/authenticationService";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     paper: {
-        minHeight: '100vh',
+        minHeight: "100vh",
         borderRadius: 0,
     },
     sidebar: {
         zIndex: 8,
     },
     subheader: {
-        display: 'flex',
-        alignItems: 'center',
-        cursor: 'pointer',
+        display: "flex",
+        alignItems: "center",
+        cursor: "pointer",
     },
     globe: {
         backgroundColor: theme.palette.primary.dark,
@@ -37,6 +38,24 @@ const Chat = () => {
     const [scope, setScope] = useState(globalChatTitle);
     const [tab, setTab] = useState(0);
     const [user, setUser] = useState(null);
+    const [currentUser = {}, setCurrentUser] = useState(
+        authenticationService.currentUserValue
+    );
+    const [currentUserId, setCurrentUserId] = useState(
+        authenticationService.currentUserValue?.id
+    );
+
+    const onLoggedIn = (user) => {
+        setCurrentUser(user);
+        setCurrentUserId(user?.id);
+    };
+
+    const onLoggedOut = () => {
+        authenticationService.logout();
+        setCurrentUser(undefined);
+        setCurrentUserId(undefined);
+    };
+
     const classes = useStyles();
 
     const handleChange = (e, newVal) => {
@@ -48,8 +67,7 @@ const Chat = () => {
             <Grid container>
                 <Grid item md={4} className={classes.sidebar}>
                     <Paper className={classes.paper}>
-
-                        <Header />
+                        <Header currentUser={currentUser} onLoggedOut={onLoggedOut} />
                         <Tabs
                             onChange={handleChange}
                             variant="fullWidth"
@@ -61,22 +79,22 @@ const Chat = () => {
                             <Tab label="Chats" />
                         </Tabs>
 
-                        {tab === 0 && (
-                            <Users setUser={setUser} setScope={setScope} />
-                        )}
+                        {tab === 0 && <Users setUser={setUser} setScope={setScope} />}
                         {tab === 1 && (
-                            <Conversations
-                                setUser={setUser}
-                                setScope={setScope}
-                            />
+                            <Conversations setUser={setUser} setScope={setScope} />
                         )}
                     </Paper>
                 </Grid>
 
                 <Grid item md={8}>
-                    <ChatBox scope={scope} user={user} />
+                    <ChatBox
+                        scope={scope}
+                        user={user}
+                        onLoggedIn={onLoggedIn}
+                        currentUser={currentUser}
+                        currentUserId={currentUserId}
+                    />
                 </Grid>
-
             </Grid>
         </React.Fragment>
     );

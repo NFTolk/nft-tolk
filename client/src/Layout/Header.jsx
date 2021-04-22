@@ -12,7 +12,6 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Typography from "@material-ui/core/Typography";
 import Tooltip from '@material-ui/core/Tooltip';
 
-import { authenticationService } from '../Services/authenticationService';
 import history from '../Utilities/history';
 import logo from './logo.gif';
 
@@ -24,6 +23,14 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 0,
         display: 'flex',
         marginLeft: '-10px',
+        transition: 'all .2s ease',
+        zIndex: 10,
+        "&:hover": {
+            transform: 'scale(2.5)',
+            marginLeft: '50px',
+            position: 'relative',
+            marginTop: '100px'
+        },
     },
     userDropdown: {
         marginLeft: theme.spacing(2),
@@ -37,7 +44,8 @@ const useStyles = makeStyles(theme => ({
         zIndex: 5,
         display: 'flex',
         flexGrow: 1,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
     logo: {
         width: '130px',
@@ -57,8 +65,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Header = () => {
-    const [currentUser = {}] = useState(authenticationService.currentUserValue);
+const Header = ({ currentUser, onLoggedOut }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -73,9 +80,9 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        authenticationService.logout();
-        history.push('/');
-    };
+        handleDropClose();
+        onLoggedOut();
+    }
 
     const arrowIcon = () => {
         if (dropdownOpen) {
@@ -85,20 +92,19 @@ const Header = () => {
     };
 
     const classes = useStyles();
-    console.log('currentUser', currentUser)
 
     return (
         <div className={classes.root}>
             <AppBar position="static" color="transparent" className={classes.appBar}>
                 <Toolbar className={classes.toolbar}>
 
-                    <Tooltip title="About Us" aria-label="About Us" placement="right" arrow>
+                    {/* <Tooltip title="About Us" aria-label="About Us" placement="right" arrow> */}
                         <Link href="https://hackerlink.io/en/Buidl/331" target="_blank" className={classes.title}>
                             <img src={logo} alt="Logo" className={classes.logo} />
                         </Link>
-                    </Tooltip>
+                    {/* </Tooltip> */}
 
-                    {currentUser ? (
+                    {currentUser?.id ? (
                         <>
                             <Button
                                 aria-owns={anchorEl ? 'simple-menu' : undefined}

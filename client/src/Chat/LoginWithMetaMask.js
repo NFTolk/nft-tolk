@@ -8,7 +8,6 @@ import getWeb3 from "../Utilities/getWeb3";
 import { currentUserSubject } from "../Services/authenticationService";
 import metamaskLogo from './metamask-logo.webp';
 
-
 const useStyles = makeStyles(theme => ({
     metamaskLogo: {
         width: 30,
@@ -20,7 +19,8 @@ const useStyles = makeStyles(theme => ({
     },
     button: {
         width: '100%',
-        fontSize: '1.5em'
+        fontSize: '1.5em',
+        borderWidth: '2px !important'
     }
 }));
 
@@ -52,7 +52,6 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
                 .then((response) => response.json())
                 // If yes, retrieve it. If no, create it.
                 .then((users) => {
-                    console.log("users", users);
                     return users.length ? users[0] : handleSignup(publicAddress);
                 })
                 // Popup MetaMask confirmation modal to sign message
@@ -64,7 +63,6 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
                     currentUserSubject.next(user);
                     return user;
                 })
-                // Pass accessToken back to parent component (to save it in localStorage)
                 .then(onLoggedIn)
                 .catch((err) => {
                     window.alert(err);
@@ -82,7 +80,6 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
     };
 
     const handleSignMessage = async ({ publicAddress, nonce }) => {
-        console.log("handleSignMessage");
         try {
             const web3 = await getWeb3();
             const signature = await web3.eth.personal.sign(
