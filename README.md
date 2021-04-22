@@ -9,6 +9,10 @@ Hackathon details: https://hackerlink.io/en/Grant/RCIS/Round/1/detail
 
 🗯 NFTolk is simple way to communicate with NFT holders, create chat rooms for NFT fans, public & private rooms and more.
 
+## 🚀 Demo
+
+https://github.com/NFTolk/nft-tolk/deployments
+
 ## Technical Details
 
 High-level app architecture looks like this:
