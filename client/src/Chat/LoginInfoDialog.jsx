@@ -44,7 +44,7 @@ export const LoginInfoDialog = () => {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Metamask is used here to create and access account in secure way. <br />
-            You can <a href="https://metamask.io/" target="_blank">install it here</a>.
+            You can <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">install it here</a>.
           </DialogContentText>
 
           <DialogBSCText />
@@ -54,10 +54,10 @@ export const LoginInfoDialog = () => {
             <hr />
             <br />
             <p>
-              Read about the project and support it if you like it with a vote: <a href="https://hackerlink.io/en/Buidl/331" target="_blank">https://hackerlink.io/en/Buidl/331</a>
+              Read about the project and support it if you like it with a vote: <a href="https://hackerlink.io/en/Buidl/331" target="_blank" rel="noopener noreferrer">https://hackerlink.io/en/Buidl/331</a>
             </p>
             <p>
-              Project is open-sourced and can be found on github: <a href="https://github.com/NFTolk" target="_blank">https://github.com/NFTolk</a>
+              Project is open-sourced and can be found on github: <a href="https://github.com/NFTolk" target="_blank" rel="noopener noreferrer">https://github.com/NFTolk</a>
             </p>
           </DialogContentText>
         </DialogContent>

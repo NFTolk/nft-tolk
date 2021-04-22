@@ -3,7 +3,6 @@ import Button from "@material-ui/core/Button";
 import { makeStyles } from '@material-ui/core/styles';
 import { useSnackbar } from "notistack";
 
-import useHandleResponse from "../Utilities/handle-response";
 import getWeb3 from "../Utilities/getWeb3";
 import { currentUserSubject } from "../Services/authenticationService";
 import metamaskLogo from './metamask-logo.webp';
@@ -31,7 +30,6 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
     const [loading, setLoading] = React.useState(false);
     const [wrongNetworkError, setWrongNetworkError] = React.useState(false);
     const { enqueueSnackbar } = useSnackbar();
-    const handleResponse = useHandleResponse();
 
     const handleClose = () => {
         setWrongNetworkError(false);
@@ -146,7 +144,11 @@ export default function LoginWithMetaMask({ onLoggedIn }) {
                     </>
                 }
             >
-                Join with MetaMask
+                {loading ? (
+                    <>Loading...</>
+                ) : (
+                    <>Join with MetaMask</>
+                )}
             </Button>
 
             <WrongNetworkDialog isOpen={wrongNetworkError} handleClose={handleClose} />
