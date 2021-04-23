@@ -5,4 +5,10 @@ export default {
       .map((i) => i.charAt(0));
     return letters.join("");
   },
+
+  getLastChars: (name) => {
+    const letters = String(name)
+      .slice(-2);
+    return letters;
+  },
 };

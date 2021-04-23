@@ -9,17 +9,39 @@ import history from './Utilities/history';
 import Home from './Home/Home';
 import Chat from './Chat/Chat';
 
+// const theme = createMuiTheme({
+//     palette: {
+//         primary: {
+//             light: '#58a5f0',
+//             main: '#0277bd',
+//             dark: '#004c8c',
+//         },
+//         secondary: {
+//             light: '#ffd95a',
+//             main: '#f9a825',
+//             dark: '#c17900',
+//             contrastText: '#212121',
+//         },
+//         background: {
+//             default: '#fff',
+//         },
+//     },
+//     typography: {
+//         useNextVariants: true,
+//     },
+// });
+
 const theme = createMuiTheme({
     palette: {
         primary: {
-            light: '#58a5f0',
-            main: '#0277bd',
-            dark: '#004c8c',
+            light: '#ffc947',
+            main: '#ff9800',
+            dark: '#c66900',
         },
         secondary: {
-            light: '#ffd95a',
-            main: '#f9a825',
-            dark: '#c17900',
+            light: '#d05ce3',
+            main: '#4caf50',
+            dark: '#6a0080',
             contrastText: '#212121',
         },
         background: {
