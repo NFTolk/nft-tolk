@@ -30,7 +30,7 @@ export const LoginInfoDialog = () => {
     <div>
 
       <IconButton type="submit" onClick={handleClickOpen}>
-        <HelpOutlineIcon />
+        <HelpOutlineIcon fontSize="large" />
       </IconButton>
 
       <Dialog
