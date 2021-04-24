@@ -7,6 +7,7 @@ const verify = require('../../utilities/verify-token');
 const Message = require('../../models/Message');
 const Conversation = require('../../models/Conversation');
 const GlobalMessage = require('../../models/GlobalMessage');
+const GlobalOffer = require('../../models/GlobalOffer');
 
 const secretOrKey = process.env.SECRET_OR_KEY;
 let jwtUser = null;
@@ -56,6 +57,70 @@ router
   })
   .post('/global', (req, res) => {
     let message = new GlobalMessage({
+      from: jwtUser.id,
+      body: req.body.body,
+    });
+
+    req.io.sockets.emit('messages', req.body.body);
+
+    message.save(err => {
+      if (err) {
+        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Failure' }));
+        res.sendStatus(500);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Success' }));
+      }
+    });
+  });
+
+// Get global offers
+router.get('/globaloffer', (req, res) => {
+  GlobalMessage.aggregate([
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'from',
+        foreignField: '_id',
+        as: 'fromObj',
+      },
+    },
+  ])
+    .project({
+      'fromObj.publicAddress': 0,
+      'fromObj.__v': 0,
+      'fromObj.date': 0,
+    })
+    .exec((err, messages) => {
+      if (err) {
+        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Failure' }));
+        res.sendStatus(500);
+      } else {
+        res.send(messages);
+      }
+    });
+});
+
+// Post global message
+// Token verfication middleware
+router
+  .use(function(req, res, next) {
+    try {
+      jwtUser = jwt.verify(verify(req), secretOrKey);
+      next();
+    } catch (err) {
+      console.log(err);
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ message: 'Unauthorized' }));
+      res.sendStatus(401);
+    }
+  })
+  .post('/globaloffer', (req, res) => {
+    let message = new GlobalOffer({
       from: jwtUser.id,
       body: req.body.body,
     });
