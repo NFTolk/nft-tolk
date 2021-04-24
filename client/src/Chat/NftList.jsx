@@ -4,7 +4,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { makeStyles } from '@material-ui/core/styles';
 import { authenticationService } from '../Services/authenticationService';
-import { Button } from '@material-ui/core';
+import DialogSell from './DialogSell';
 
 const useStyles = makeStyles(theme => ({
   subheader: {
@@ -55,12 +55,10 @@ const NftList = props => {
               </ListItemAvatar> */}
               <ListItemText
                 className={classes.subheaderText}
-                primary={`${nft.tokenName} Contract:`}
+                primary={`${nft.tokenName} ${nft.tokenID} Contract:`}
                 secondary={nft.contractAddress}
               />
-              <Button color="primary" variant="contained" size="small">
-                Start discussion
-              </Button>
+              <DialogSell nft={nft} />
             </ListItem>
           ))}
         </React.Fragment>
