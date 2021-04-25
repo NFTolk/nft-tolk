@@ -18,6 +18,7 @@ export default function FormDialog({ nft }) {
   };
 
   const handleClose = () => {
+    if (!newNftOfferPrice) return;
     sendGlobalNftOffer({ price: newNftOfferPrice, nft }).then(() => {
       setNewNftOfferPrice('');
     });
