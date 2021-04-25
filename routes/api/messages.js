@@ -78,7 +78,7 @@ router
 
 // Get global offers
 router.get('/globaloffer', (req, res) => {
-  GlobalMessage.aggregate([
+  GlobalOffer.aggregate([
     {
       $lookup: {
         from: 'users',
