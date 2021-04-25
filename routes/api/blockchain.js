@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const web3abi = require('web3-eth-abi');
+const lastUniqueBy = require('../../utilities/filter');
 
 const jsonInterface = {
   inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
@@ -13,15 +14,6 @@ const jsonInterface = {
 
 const getEthCallData = parameters =>
   web3abi.encodeFunctionCall(jsonInterface, parameters);
-
-const lastUniqueBy = (arr, prop) => {
-  return arr.reduceRight((accumulator, current) => {
-    if (!accumulator.some(x => x[prop] === current[prop])) {
-      accumulator.push(current);
-    }
-    return accumulator;
-  }, []);
-};
 
 const byOwner = ownerId => val => val.to === ownerId;
 
