@@ -51,12 +51,12 @@ export default function OfferCard({ message }) {
   const offer = message.body.nft;
 
   React.useEffect(() => {
+    setLoaded(true);
     getNftDetails();
   }, []);
 
   const getNftDetails = nftList => {
     if (!offer.url) return;
-    setLoaded(true);
     return fetch(offer.url)
       .then(handleResponse)
       .then(nftMeta => {
