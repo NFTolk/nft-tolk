@@ -15,7 +15,11 @@ import ChatBox from './ChatBox';
 import Conversations from './Conversations';
 import Users from './Users';
 import NftList from './NftList';
-import { globalChatTitle, drawerWidth, drawerMaxWidth } from '../Utilities/constants';
+import {
+  globalChatTitle,
+  drawerWidth,
+  drawerMaxWidth,
+} from '../Utilities/constants';
 import { authenticationService } from '../Services/authenticationService';
 
 const useStyles = makeStyles(theme => ({
@@ -61,8 +65,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
-const Chat = (props) => {
+const Chat = props => {
   const { window } = props;
   const theme = useTheme();
   const classes = useStyles();
@@ -110,21 +113,18 @@ const Chat = (props) => {
         >
           <Tab label="Users" />
           <Tab label="Chats" />
-          {authenticationService.currentUserValue && (
-            <Tab label="My NFTs" />
-          )}
+          {authenticationService.currentUserValue && <Tab label="My NFTs" />}
         </Tabs>
 
         {tab === 0 && <Users setUser={setUser} setScope={setScope} />}
-        {tab === 1 && (
-          <Conversations setUser={setUser} setScope={setScope} />
-        )}
+        {tab === 1 && <Conversations setUser={setUser} setScope={setScope} />}
         {tab === 2 && <NftList />}
       </Paper>
     </Grid>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
     <>

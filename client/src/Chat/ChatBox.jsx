@@ -1,112 +1,121 @@
-import React, { useState, useEffect, useRef } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
-import Paper from "@material-ui/core/Paper";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import { orderBy } from "lodash";
+import React, { useState, useEffect, useRef } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import Paper from '@material-ui/core/Paper';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import { orderBy } from 'lodash';
 
-import OfferCard from "./OfferCard";
+import OfferCard from './OfferCard';
 
-import socketIOClient from "socket.io-client";
-import classnames from "classnames";
+import socketIOClient from 'socket.io-client';
+import classnames from 'classnames';
 
-import commonUtilites from "../Utilities/common";
+import commonUtilites from '../Utilities/common';
 import {
   useGetGlobalMessages,
   useGetGlobalNftOffers,
   useSendGlobalMessage,
   useGetConversationMessages,
   useSendConversationMessage,
-} from "../Services/chatService";
-import LoginWithMetaMask from "./LoginWithMetaMask";
-import { globalChatTitle, drawerWidth } from "../Utilities/constants";
-import LoginInfoDialog from "./LoginInfoDialog";
+} from '../Services/chatService';
+import LoginWithMetaMask from './LoginWithMetaMask';
+import { globalChatTitle, drawerWidth } from '../Utilities/constants';
+import LoginInfoDialog from './LoginInfoDialog';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up("sm")]: {
-      display: "none",
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
     },
-    position: "absolute",
-    left: "30px",
+    position: 'absolute',
+    left: '30px',
     zIndex: 1,
   },
   root: {
-    height: "100%",
+    height: '100%',
   },
   headerRow: {
     maxHeight: 60,
     zIndex: 5,
   },
   paper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100px",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100px',
     color: theme.palette.primary.dark,
-    boxShadow: "none",
-    borderBottom: "1px solid rgba(0,0,0, .25)",
+    boxShadow: 'none',
+    borderBottom: '1px solid rgba(0,0,0, .25)',
   },
   messageContainer: {
-    height: "100%",
-    display: "flex",
-    alignContent: "flex-end",
+    height: '100%',
+    display: 'flex',
+    alignContent: 'flex-end',
   },
   messagesRow: {
-    maxHeight: "calc(100vh - 184px)",
-    overflowY: "auto",
+    maxHeight: 'calc(100vh - 184px)',
+    overflowY: 'auto',
   },
   newMessageRow: {
-    width: "100%",
+    width: '100%',
     padding: theme.spacing(0, 2, 1),
   },
   messageBubble: {
-    backgroundColor: "white",
-    borderRadius: "0 10px 10px 10px",
-    maxWidth: "40em",
+    backgroundColor: 'white',
+    borderRadius: '0 10px 10px 10px',
+    maxWidth: '40em',
+    position: 'relative',
   },
   messageBubbleRight: {
-    borderRadius: "10px 0 10px 10px",
-    backgroundColor: "#edf6fd",
-    borderColor: "#edf6fd",
-    padding: "10px",
-    marginRight: "10px",
+    borderRadius: '10px 0 10px 10px',
+    backgroundColor: '#edf6fd',
+    borderColor: '#edf6fd',
+    padding: '10px',
+    marginRight: '10px',
   },
   inputRow: {
-    display: "flex",
-    alignItems: "flex-end",
+    display: 'flex',
+    alignItems: 'flex-end',
   },
   input: {
-    padding: "10px",
+    padding: '10px',
   },
   form: {
-    width: "100%",
+    width: '100%',
   },
   avatar: {
     margin: theme.spacing(1, 0),
   },
   listItem: {
-    display: "flex",
-    width: "100%",
+    display: 'flex',
+    width: '100%',
   },
   listItemRight: {
-    flexDirection: "row-reverse",
+    flexDirection: 'row-reverse',
   },
   username: {
     fontWeight: 500,
     opacity: 0.3,
   },
+  time: {
+    fontWeight: 500,
+    opacity: 0.3,
+    fontSize: 10,
+    position: 'absolute',
+    right: '10px',
+    top: '-16px',
+  },
   emoji: {
-    fontSize: "3em",
+    fontSize: '3em',
   },
 }));
 
@@ -119,7 +128,7 @@ const ChatBox = ({
   conversationId,
   handleDrawerToggle,
 }) => {
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);
 
@@ -139,7 +148,8 @@ const ChatBox = ({
 
   useEffect(() => {
     const socket = socketIOClient(process.env.REACT_APP_API_URL);
-    socket.on("messages", (data) => setLastMessage(data));
+    socket.on('messages', data => setLastMessage(data));
+    socket.on('offers', data => setLastMessage(data.tokenID));
   }, []);
 
   const reloadMessages = () => {
@@ -147,40 +157,40 @@ const ChatBox = ({
     if (scope === globalChatTitle) {
       Promise.allSettled([
         getGlobalMessages(),
-        getGlobalNftOffers().then((res) => {
-          const msgsWithType = res.map((el) => ({ ...el, type: "offer" }));
+        getGlobalNftOffers().then(res => {
+          const msgsWithType = res.map(el => ({ ...el, type: 'offer' }));
           return msgsWithType;
         }),
-      ]).then((results) => {
+      ]).then(results => {
         const messagesAll = results.reduce((acc, el) => {
           if (!el.value && !el?.value?.length) return acc;
           return [...acc, ...el.value];
         }, []);
-        const messagesSorted = orderBy(messagesAll, ["date"], ["asc"]);
+        const messagesSorted = orderBy(messagesAll, ['date'], ['asc']);
         setMessages(messagesSorted);
       });
     } else if (scope !== null && conversationId !== null) {
-      getConversationMessages(user?._id).then((res) => setMessages(res));
+      getConversationMessages(user?._id).then(res => setMessages(res));
     } else {
       setMessages([]);
     }
   };
 
   const scrollToBottom = () => {
-    chatBottom.current.scrollIntoView({ behavior: "smooth" });
+    chatBottom.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(scrollToBottom, [messages]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
     if (scope === globalChatTitle) {
       sendGlobalMessage(newMessage).then(() => {
-        setNewMessage("");
+        setNewMessage('');
       });
     } else {
-      sendConversationMessage(user._id, newMessage).then((res) => {
-        setNewMessage("");
+      sendConversationMessage(user._id, newMessage).then(res => {
+        setNewMessage('');
       });
     }
   };
@@ -209,8 +219,8 @@ const ChatBox = ({
           <Grid item xs={12} className={classes.messagesRow}>
             {messages.length ? (
               <List>
-                {messages.map((m) => {
-                  if (m.type === "offer") {
+                {messages.map(m => {
+                  if (m.type === 'offer') {
                     return <OfferCard key={m._id} message={m} />;
                   } else {
                     return (
@@ -254,7 +264,7 @@ const ChatBox = ({
 /**
  * Check either text contains only emoji
  */
-const isEmoji = (text = "") => {
+const isEmoji = (text = '') => {
   return /^\p{Emoji}+$/u.test(text);
 };
 
@@ -270,7 +280,7 @@ const ChatInput = ({ handleSubmit, classes, newMessage, setNewMessage }) => {
             margin="dense"
             fullWidth
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={e => setNewMessage(e.target.value)}
           />
         </Grid>
       </Grid>
@@ -280,7 +290,7 @@ const ChatInput = ({ handleSubmit, classes, newMessage, setNewMessage }) => {
 
 const MessageBubble = ({ message, currentUserId }) => {
   const classes = useStyles();
-  const msgClasses = (text) => (isEmoji(text) ? classes.emoji : "");
+  const msgClasses = text => (isEmoji(text) ? classes.emoji : '');
 
   return (
     <ListItem
@@ -302,6 +312,11 @@ const MessageBubble = ({ message, currentUserId }) => {
         }}
         primary={
           <>
+            <div className={classes.time}>
+              {new Date(+message.date).toLocaleString('en-US', {
+                hour12: false,
+              })}
+            </div>
             <div className={classes.username}>
               {message.fromObj[0] && message.fromObj[0]?.name}
             </div>

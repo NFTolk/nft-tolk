@@ -126,18 +126,25 @@ router
     });
 
     req.io.sockets.emit('messages', req.body.body);
-
-    message.save(err => {
-      if (err) {
-        console.log(err);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ message: 'Failure' }));
-        res.sendStatus(500);
-      } else {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ message: 'Success' }));
-      }
-    });
+    GlobalOffer.find({ 'body.nft.tokenID': req.body.body.nft.tokenID })
+      .deleteMany()
+      .exec(err => {
+        if (err) {
+          console.log(err);
+        } else {
+          message.save(err => {
+            if (err) {
+              console.log(err);
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ message: 'Failure' }));
+              res.sendStatus(500);
+            } else {
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ message: 'Success' }));
+            }
+          });
+        }
+      });
   });
 
 // Get conversations list
@@ -251,7 +258,7 @@ router.post('/', (req, res) => {
           body: req.body.body,
         });
 
-        req.io.sockets.emit('messages', req.body.body);
+        req.io.sockets.emit('offers', req.body.body);
 
         message.save(err => {
           if (err) {
