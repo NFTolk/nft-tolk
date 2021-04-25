@@ -149,7 +149,7 @@ const ChatBox = ({
   useEffect(() => {
     const socket = socketIOClient(process.env.REACT_APP_API_URL);
     socket.on('messages', data => setLastMessage(data));
-    socket.on('offers', data => setLastMessage(data.tokenID));
+    socket.on('offers', data => setLastMessage(data.nft.tokenID));
   }, []);
 
   const reloadMessages = () => {

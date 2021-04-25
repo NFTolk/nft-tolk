@@ -125,7 +125,7 @@ router
       body: req.body.body,
     });
 
-    req.io.sockets.emit('messages', req.body.body);
+    req.io.sockets.emit('offers', req.body.body);
     GlobalOffer.find({ 'body.nft.tokenID': req.body.body.nft.tokenID })
       .deleteMany()
       .exec(err => {
@@ -258,7 +258,7 @@ router.post('/', (req, res) => {
           body: req.body.body,
         });
 
-        req.io.sockets.emit('offers', req.body.body);
+        req.io.sockets.emit('messages', req.body.body);
 
         message.save(err => {
           if (err) {
