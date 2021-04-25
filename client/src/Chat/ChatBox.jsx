@@ -9,9 +9,11 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Paper from "@material-ui/core/Paper";
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import { orderBy } from "lodash";
 
+import OfferCard from "./OfferCard";
 
 import socketIOClient from "socket.io-client";
 import classnames from "classnames";
@@ -19,22 +21,23 @@ import classnames from "classnames";
 import commonUtilites from "../Utilities/common";
 import {
   useGetGlobalMessages,
+  useGetGlobalNftOffers,
   useSendGlobalMessage,
   useGetConversationMessages,
   useSendConversationMessage,
 } from "../Services/chatService";
 import LoginWithMetaMask from "./LoginWithMetaMask";
-import { globalChatTitle, drawerWidth } from '../Utilities/constants';
+import { globalChatTitle, drawerWidth } from "../Utilities/constants";
 import LoginInfoDialog from "./LoginInfoDialog";
 
 const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none',
+    [theme.breakpoints.up("sm")]: {
+      display: "none",
     },
-    position: 'absolute',
-    left: '30px',
+    position: "absolute",
+    left: "30px",
     zIndex: 1,
   },
   root: {
@@ -103,8 +106,8 @@ const useStyles = makeStyles((theme) => ({
     opacity: 0.3,
   },
   emoji: {
-    fontSize: '3em'
-  }
+    fontSize: "3em",
+  },
 }));
 
 const ChatBox = ({
@@ -121,6 +124,7 @@ const ChatBox = ({
   const [lastMessage, setLastMessage] = useState(null);
 
   const getGlobalMessages = useGetGlobalMessages();
+  const getGlobalNftOffers = useGetGlobalNftOffers();
   const sendGlobalMessage = useSendGlobalMessage();
   const getConversationMessages = useGetConversationMessages();
   const sendConversationMessage = useSendConversationMessage();
@@ -139,9 +143,21 @@ const ChatBox = ({
   }, []);
 
   const reloadMessages = () => {
+    setMessages([]);
     if (scope === globalChatTitle) {
-      getGlobalMessages().then((res) => {
-        setMessages(res);
+      Promise.allSettled([
+        getGlobalMessages(),
+        getGlobalNftOffers().then((res) => {
+          const msgsWithType = res.map((el) => ({ ...el, type: "offer" }));
+          return msgsWithType;
+        }),
+      ]).then((results) => {
+        const messagesAll = results.reduce((acc, el) => {
+          if (!el.value && !el?.value?.length) return acc;
+          return [...acc, ...el.value];
+        }, []);
+        const messagesSorted = orderBy(messagesAll, ["date"], ["asc"]);
+        setMessages(messagesSorted);
       });
     } else if (scope !== null && conversationId !== null) {
       getConversationMessages(user?._id).then((res) => setMessages(res));
@@ -169,24 +185,22 @@ const ChatBox = ({
     }
   };
 
-  const msgClasses = (text) => isEmoji(text) ? classes.emoji : '';
-
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.headerRow}>
         <Paper className={classes.paper} square elevation={2}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              className={classes.menuButton}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography color="inherit" variant="h6">
-              {scope}
-            </Typography>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            className={classes.menuButton}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography color="inherit" variant="h6">
+            {scope}
+          </Typography>
         </Paper>
       </Grid>
 
@@ -195,38 +209,19 @@ const ChatBox = ({
           <Grid item xs={12} className={classes.messagesRow}>
             {messages.length ? (
               <List>
-                {messages.map((m) => (
-                  <ListItem
-                    key={m._id}
-                    className={classnames(classes.listItem, {
-                      [`${classes.listItemRight}`]:
-                        m.fromObj[0]?._id === currentUserId,
-                    })}
-                    alignItems="flex-start"
-                  >
-                    <ListItemAvatar className={classes.avatar}>
-                      <Avatar>
-                        {commonUtilites.getLastChars(m.fromObj[0]?.name)}
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      classes={{
-                        root: classnames(classes.messageBubble, {
-                          [`${classes.messageBubbleRight}`]:
-                            m.fromObj[0]?._id === currentUserId,
-                        }),
-                      }}
-                      primary={
-                        <>
-                          <div className={classes.username}>
-                            {m.fromObj[0] && m.fromObj[0]?.name}
-                          </div>
-                          <div className={msgClasses(m.body)}>{m.body}</div>
-                        </>
-                      }
-                    />
-                  </ListItem>
-                ))}
+                {messages.map((m) => {
+                  if (m.type === "offer") {
+                    return <OfferCard key={m._id} message={m} />;
+                  } else {
+                    return (
+                      <MessageBubble
+                        message={m}
+                        key={m._id}
+                        currentUserId={currentUserId}
+                      />
+                    );
+                  }
+                })}
               </List>
             ) : null}
             <div ref={chatBottom} />
@@ -259,9 +254,9 @@ const ChatBox = ({
 /**
  * Check either text contains only emoji
  */
-const isEmoji = (text = '') => {
-  return /^\p{Emoji}+$/u.test(text)
-}
+const isEmoji = (text = "") => {
+  return /^\p{Emoji}+$/u.test(text);
+};
 
 const ChatInput = ({ handleSubmit, classes, newMessage, setNewMessage }) => {
   return (
@@ -280,6 +275,41 @@ const ChatInput = ({ handleSubmit, classes, newMessage, setNewMessage }) => {
         </Grid>
       </Grid>
     </form>
+  );
+};
+
+const MessageBubble = ({ message, currentUserId }) => {
+  const classes = useStyles();
+  const msgClasses = (text) => (isEmoji(text) ? classes.emoji : "");
+
+  return (
+    <ListItem
+      key={message._id}
+      className={classnames(classes.listItem, {
+        [`${classes.listItemRight}`]: message.fromObj[0]?._id === currentUserId,
+      })}
+      alignItems="flex-start"
+    >
+      <ListItemAvatar className={classes.avatar}>
+        <Avatar>{commonUtilites.getLastChars(message.fromObj[0]?.name)}</Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        classes={{
+          root: classnames(classes.messageBubble, {
+            [`${classes.messageBubbleRight}`]:
+              message.fromObj[0]?._id === currentUserId,
+          }),
+        }}
+        primary={
+          <>
+            <div className={classes.username}>
+              {message.fromObj[0] && message.fromObj[0]?.name}
+            </div>
+            <div className={msgClasses(message.body)}>{message.body}</div>
+          </>
+        }
+      />
+    </ListItem>
   );
 };
 

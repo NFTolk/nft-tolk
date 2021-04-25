@@ -11,6 +11,7 @@ import WrongNetworkDialog from './WrongNetworkDialog'
 const useStyles = makeStyles(theme => ({
     metamaskLogo: {
         width: 30,
+        height: 30,
         marginRight: 20
     },
     buttonWrapper: {
