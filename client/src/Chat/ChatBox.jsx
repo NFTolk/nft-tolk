@@ -11,7 +11,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import moment from 'moment';
 import { orderBy } from 'lodash';
 
 import OfferCard from './OfferCard';
@@ -314,7 +313,9 @@ const MessageBubble = ({ message, currentUserId }) => {
         primary={
           <>
             <div className={classes.time}>
-              {moment(+message.date).format('DD/MM/YYYY hh:mm')}
+              {new Date(+message.date).toLocaleString('en-US', {
+                hour12: false,
+              })}
             </div>
             <div className={classes.username}>
               {message.fromObj[0] && message.fromObj[0]?.name}

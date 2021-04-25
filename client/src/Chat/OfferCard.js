@@ -16,7 +16,6 @@ import ListItem from '@material-ui/core/ListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import useHandleResponse from '../Utilities/handle-response';
-import moment from 'moment';
 
 const useStyles = makeStyles({
   root: {
@@ -86,7 +85,9 @@ export default function OfferCard({ message }) {
             </IconButton>
           }
           title="NFT Offer Posted"
-          subheader={moment(+message.date).format('DD/MM/YYYY hh:mm')}
+          subheader={new Date(+message.date).toLocaleString('en-US', {
+            hour12: false,
+          })}
         />
         <CardActionArea>
           {loaded ? (
