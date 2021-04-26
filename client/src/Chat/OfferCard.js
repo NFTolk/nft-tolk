@@ -16,6 +16,7 @@ import ListItem from '@material-ui/core/ListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import useHandleResponse from '../Utilities/handle-response';
+import { authenticationService } from '../Services/authenticationService';
 
 const useStyles = makeStyles({
   root: {
@@ -128,7 +129,12 @@ export default function OfferCard({ message }) {
           <IconButton aria-label="share">
             <ShareIcon />
           </IconButton>
-          <Button size="small" color="primary" className={classes.buyButton}>
+          <Button
+            size="small"
+            color="primary"
+            disabled={!authenticationService.currentUserValue}
+            className={classes.buyButton}
+          >
             Buy for BNB {message.body.price}
           </Button>
         </CardActions>

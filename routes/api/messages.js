@@ -41,6 +41,35 @@ router.get('/global', (req, res) => {
     });
 });
 
+// Get global offers
+router.get('/globaloffer', (req, res) => {
+  GlobalOffer.aggregate([
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'from',
+        foreignField: '_id',
+        as: 'fromObj',
+      },
+    },
+  ])
+    .project({
+      'fromObj.publicAddress': 0,
+      'fromObj.__v': 0,
+      'fromObj.date': 0,
+    })
+    .exec((err, messages) => {
+      if (err) {
+        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Failure' }));
+        res.sendStatus(500);
+      } else {
+        res.send(messages);
+      }
+    });
+});
+
 // Post global message
 // Token verfication middleware
 router
@@ -75,35 +104,6 @@ router
       }
     });
   });
-
-// Get global offers
-router.get('/globaloffer', (req, res) => {
-  GlobalOffer.aggregate([
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'from',
-        foreignField: '_id',
-        as: 'fromObj',
-      },
-    },
-  ])
-    .project({
-      'fromObj.publicAddress': 0,
-      'fromObj.__v': 0,
-      'fromObj.date': 0,
-    })
-    .exec((err, messages) => {
-      if (err) {
-        console.log(err);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ message: 'Failure' }));
-        res.sendStatus(500);
-      } else {
-        res.send(messages);
-      }
-    });
-});
 
 // Post global message
 // Token verfication middleware
