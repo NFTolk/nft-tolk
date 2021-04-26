@@ -43,8 +43,8 @@ const Conversations = (props) => {
   const handleRecipient = (recipients) => {
     for (let i = 0; i < recipients.length; i++) {
       if (
-        recipients[i].username !==
-        authenticationService.currentUserValue.username
+        recipients[i]?.username !==
+        authenticationService.currentUserValue?.username
       ) {
         return recipients[i];
       }
