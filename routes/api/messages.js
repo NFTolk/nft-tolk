@@ -41,41 +41,6 @@ router.get('/global', (req, res) => {
     });
 });
 
-// Post global message
-// Token verfication middleware
-router
-  .use(function(req, res, next) {
-    try {
-      jwtUser = jwt.verify(verify(req), secretOrKey);
-      next();
-    } catch (err) {
-      console.log(err);
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ message: 'Unauthorized' }));
-      res.sendStatus(401);
-    }
-  })
-  .post('/global', (req, res) => {
-    let message = new GlobalMessage({
-      from: jwtUser.id,
-      body: req.body.body,
-    });
-
-    req.io.sockets.emit('messages', req.body.body);
-
-    message.save(err => {
-      if (err) {
-        console.log(err);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ message: 'Failure' }));
-        res.sendStatus(500);
-      } else {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ message: 'Success' }));
-      }
-    });
-  });
-
 // Get global offers
 router.get('/globaloffer', (req, res) => {
   GlobalOffer.aggregate([
@@ -119,11 +84,48 @@ router
       res.sendStatus(401);
     }
   })
+  .post('/global', (req, res) => {
+    let message = new GlobalMessage({
+      from: jwtUser.id,
+      body: req.body.body,
+    });
+
+    req.io.sockets.emit('messages', req.body.body);
+
+    message.save(err => {
+      if (err) {
+        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Failure' }));
+        res.sendStatus(500);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ message: 'Success' }));
+      }
+    });
+  });
+
+// Post global message
+// Token verfication middleware
+router
+  .use(function(req, res, next) {
+    try {
+      jwtUser = jwt.verify(verify(req), secretOrKey);
+      next();
+    } catch (err) {
+      console.log(err);
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ message: 'Unauthorized' }));
+      res.sendStatus(401);
+    }
+  })
   .post('/globaloffer', (req, res) => {
     let message = new GlobalOffer({
       from: jwtUser.id,
       body: req.body.body,
     });
+
+    const priceEqualZero = parseInt(req.body.body.price) === 0;
 
     req.io.sockets.emit('offers', req.body.body);
     GlobalOffer.find({ 'body.nft.tokenID': req.body.body.nft.tokenID })
@@ -131,6 +133,10 @@ router
       .exec(err => {
         if (err) {
           console.log(err);
+        } else if (priceEqualZero) {
+          // dont create new item when price is 0, just remove old one
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ message: 'Success' }));
         } else {
           message.save(err => {
             if (err) {

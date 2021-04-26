@@ -107,12 +107,9 @@ const useStyles = makeStyles(theme => ({
     opacity: 0.3,
   },
   time: {
-    fontWeight: 500,
-    opacity: 0.3,
-    fontSize: 10,
-    position: 'absolute',
-    right: '10px',
-    top: '-16px',
+    fontSize: '10px',
+    lineHeight: '1em',
+    display: 'block'
   },
   emoji: {
     fontSize: '3em',
@@ -312,13 +309,14 @@ const MessageBubble = ({ message, currentUserId }) => {
         }}
         primary={
           <>
-            <div className={classes.time}>
-              {new Date(+message.date).toLocaleString('en-US', {
-                hour12: false,
-              })}
-            </div>
             <div className={classes.username}>
               {message.fromObj[0] && message.fromObj[0]?.name}
+              <br />
+              <span className={classes.time}>
+                {new Date(+message.date).toLocaleString('en-US', {
+                  hour12: false,
+                })}
+              </span>
             </div>
             <div className={msgClasses(message.body)}>{message.body}</div>
           </>

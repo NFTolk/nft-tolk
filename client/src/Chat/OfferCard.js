@@ -16,11 +16,14 @@ import ListItem from '@material-ui/core/ListItem';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import useHandleResponse from '../Utilities/handle-response';
+import { authenticationService } from '../Services/authenticationService';
 
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
-    height: 420,
+    // height: 420,
+    background: '#f0f0f0',
+    padding: '0 0.25em'
   },
   media: {
     height: 200,
@@ -41,6 +44,9 @@ const useStyles = makeStyles({
   placeholder: {
     height: 250,
   },
+  cardContent: {
+    padding: '16px 16px 0'
+  }
 });
 
 export default function OfferCard({ message }) {
@@ -72,17 +78,12 @@ export default function OfferCard({ message }) {
 
   return (
     <ListItem alignItems="flex-start">
-      <Card className={classes.root} elevation={2}>
+      <Card className={classes.root} elevation={0}>
         <CardHeader
           avatar={
             <Typography variant="h4" component="h4">
               💎
             </Typography>
-          }
-          action={
-            <IconButton aria-label="settings">
-              <MoreVertIcon />
-            </IconButton>
           }
           title="NFT Offer Posted"
           subheader={new Date(+message.date).toLocaleString('en-US', {
@@ -110,8 +111,8 @@ export default function OfferCard({ message }) {
           ) : (
             <>
               <CardMedia className={classes.media} image={nftDetails.image} />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
+              <CardContent className={classes.cardContent}>
+                <Typography gutterBottom variant="body2" component="p">
                   {nftDetails.name}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
@@ -122,13 +123,12 @@ export default function OfferCard({ message }) {
           )}
         </CardActionArea>
         <CardActions>
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-          <IconButton aria-label="share">
-            <ShareIcon />
-          </IconButton>
-          <Button size="small" color="primary" className={classes.buyButton}>
+          <Button
+            size="small"
+            color="primary"
+            disabled={!authenticationService.currentUserValue}
+            className={classes.buyButton}
+          >
             Buy for BNB {message.body.price}
           </Button>
         </CardActions>

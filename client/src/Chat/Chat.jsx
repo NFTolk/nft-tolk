@@ -63,6 +63,10 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     display: 'flex',
   },
+  tabButton: {
+    minWidth: '120px',
+    maxWidth: '120px'
+  }
 }));
 
 const Chat = props => {
@@ -111,9 +115,9 @@ const Chat = props => {
           indicatorColor="primary"
           textColor="primary"
         >
-          <Tab label="Users" />
-          <Tab label="Chats" />
-          {authenticationService.currentUserValue && <Tab label="My NFTs" />}
+          <Tab label="Users" className={classes.tabButton} />
+          <Tab label="Chats" className={classes.tabButton} />
+          {authenticationService.currentUserValue && <Tab label="My NFTs" className={classes.tabButton} />}
         </Tabs>
 
         {tab === 0 && <Users setUser={setUser} setScope={setScope} />}
