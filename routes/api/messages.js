@@ -125,12 +125,18 @@ router
       body: req.body.body,
     });
 
+    const priceEqualZero = parseInt(req.body.body.price) === 0;
+
     req.io.sockets.emit('offers', req.body.body);
     GlobalOffer.find({ 'body.nft.tokenID': req.body.body.nft.tokenID })
       .deleteMany()
       .exec(err => {
         if (err) {
           console.log(err);
+        } else if (priceEqualZero) {
+          // dont create new item when price is 0, just remove old one
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ message: 'Success' }));
         } else {
           message.save(err => {
             if (err) {
